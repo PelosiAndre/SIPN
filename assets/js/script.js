@@ -115,4 +115,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if(h2) h2.textContent = `Aula atual: ${lessonTitle}`;
         });
     });
+
+    const downloadBtns = document.querySelectorAll('.btn-download-cert');
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const targetCard = document.getElementById(targetId);
+            
+            const printWrapper = document.createElement('div');
+            printWrapper.classList.add('print-wrapper');
+            
+            const clone = targetCard.cloneNode(true);
+            clone.classList.add('printing');
+            
+            printWrapper.appendChild(clone);
+            document.body.appendChild(printWrapper);
+            
+            document.body.classList.add('print-mode');
+            
+            window.print();
+            
+            setTimeout(() => {
+                document.body.classList.remove('print-mode');
+                printWrapper.remove();
+            }, 500);
+        });
+    });
 });

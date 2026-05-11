@@ -64,9 +64,9 @@ $catalogo_cursos = [
                 <img src="../assets/img/logo.png" alt="Logo SIPN" class="sidebar-logo">
             </header>
             <nav class="sidebar-nav">
-                <a href="#meus-cursos" class="sidebar-link active">Meus Cursos</a>
-                <a href="#catalogo" class="sidebar-link">Catálogo de Cursos</a>
-                <a href="#certificados" class="sidebar-link">Meus Certificados</a>
+                <a href="painel_aluno.php#meus-cursos" class="sidebar-link active">Meus Cursos</a>
+                <a href="painel_aluno.php#catalogo" class="sidebar-link">Catálogo de Cursos</a>
+                <a href="certificados.php" class="sidebar-link">Meus Certificados</a>
             </nav>
             <footer class="sidebar-footer">
                 <a href="../controller/logout.php" class="btn-logout">Sair da Conta</a>
