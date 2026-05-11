@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['lembrar_me'])) {
                 setcookie('aluno_logado', 'true', time() + (86400 * 30), "/");
             }
-            header("Location: ../view/login_aluno.php"); 
+            header("Location: ../view/painel_aluno.php"); 
             exit();
             break;
 
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['lembrar_me'])) {
                 setcookie('funcionario_logado', 'true', time() + (86400 * 30), "/");
             }
-            header("Location: ../view/login_funcionario.php");
+            header("Location: ../view/painel_funcionario.php");
             exit();
             break;
 

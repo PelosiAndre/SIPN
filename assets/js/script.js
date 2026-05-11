@@ -79,4 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
             if(authToggleHeader) authToggleHeader.classList.remove('hidden');
         });
     });
+
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    const searchCatalog = document.getElementById('search-catalog');
+    if (searchCatalog) {
+        searchCatalog.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const catalogItems = document.querySelectorAll('.catalog-item');
+
+            catalogItems.forEach(item => {
+                const title = item.querySelector('.course-title').textContent.toLowerCase();
+                const entity = item.querySelector('.course-entity').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || entity.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
 });
