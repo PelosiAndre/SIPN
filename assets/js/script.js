@@ -106,4 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    const lessonItems = document.querySelectorAll('.lesson-item');
+    lessonItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const lessonTitle = this.querySelector('.lesson-title').textContent;
+            const h2 = document.querySelector('.lesson-info h2');
+            if(h2) h2.textContent = `Aula atual: ${lessonTitle}`;
+        });
+    });
 });

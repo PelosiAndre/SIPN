@@ -123,7 +123,7 @@ $catalogo_cursos = [
                             <h3 class="course-title"><?php echo htmlspecialchars($curso['titulo']); ?></h3>
                         </section>
                         <footer class="course-action">
-                            <a href="matricula.php?id=<?php echo $curso['id']; ?>" class="btn-outline w-100" style="text-align: center;">Ver Detalhes</a>
+                            <a href="curso.php?id=<?php echo $curso['id']; ?>" class="btn-outline w-100" style="text-align: center;">Acessar Curso</a>
                         </footer>
                     </article>
                     <?php endforeach; ?>
