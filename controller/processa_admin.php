@@ -7,35 +7,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch ($acao) {
         case 'cadastrar_entidade':
             $nome = $_POST['nome'] ?? '';
-            $cnpj = $_POST['cnpj'] ?? '';
-            $email = $_POST['email'] ?? '';
-            
             echo "<script>alert('Sucesso: A entidade " . htmlspecialchars($nome) . " foi registrada.'); window.location.href = '../view/gerenciar_entidades.php';</script>";
             exit();
             break;
 
         case 'cadastrar_curso':
             $titulo = $_POST['titulo'] ?? '';
-            $entidade_id = $_POST['entidade_id'] ?? '';
-            $descricao = $_POST['descricao'] ?? '';
-            $carga = $_POST['carga_horaria'] ?? '';
-            $imagem = $_POST['imagem_capa'] ?? '';
-            
-            $aulas_titulo = $_POST['aula_titulo'] ?? [];
-            $aulas_duracao = $_POST['aula_duracao'] ?? [];
-            $aulas_video = $_POST['aula_video'] ?? [];
-            
-            $quantidadeAulas = count($aulas_titulo);
-
-            echo "<script>alert('Sucesso: O curso " . htmlspecialchars($titulo) . " foi publicado com " . $quantidadeAulas . " aulas cadastradas.'); window.location.href = '../view/gerenciar_cursos.php';</script>";
+            echo "<script>alert('Sucesso: O curso " . htmlspecialchars($titulo) . " foi publicado no catálogo.'); window.location.href = '../view/gerenciar_cursos.php';</script>";
             exit();
             break;
 
         case 'deletar_item':
             $codigo = $_POST['codigo_auth'] ?? '';
-            $tipo = $_POST['tipo_item'] ?? '';
-            $id = $_POST['id_item'] ?? '';
-            
             $codigoCorreto = 'DEL2026';
 
             if ($codigo === $codigoCorreto) {
@@ -43,6 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 echo "<script>alert('Código de autorização inválido.'); window.history.back();</script>";
             }
+            exit();
+            break;
+
+        case 'editar_aluno':
+            echo "<script>alert('Dados do aluno atualizados com sucesso!'); window.location.href = '../view/gerenciar_alunos.php';</script>";
+            exit();
+            break;
+
+        case 'editar_funcionario':
+            echo "<script>alert('Dados do funcionário atualizados com sucesso!'); window.location.href = '../view/gerenciar_funcionarios.php';</script>";
+            exit();
+            break;
+
+        case 'editar_curso':
+            echo "<script>alert('Informações do curso atualizadas com sucesso!'); window.location.href = '../view/gerenciar_cursos.php';</script>";
+            exit();
+            break;
+
+        case 'editar_entidade':
+            echo "<script>alert('Dados da entidade atualizados com sucesso!'); window.location.href = '../view/gerenciar_entidades.php';</script>";
             exit();
             break;
 
