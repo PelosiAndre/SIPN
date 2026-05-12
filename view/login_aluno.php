@@ -5,6 +5,7 @@ if (isset($_COOKIE['aluno_logado']) && $_COOKIE['aluno_logado'] === 'true') {
     exit();
 }
 $showReset = isset($_GET['redefinir']) ? true : false;
+$showRegister = (isset($_GET['aba']) && $_GET['aba'] === 'cadastro') ? true : false;
 $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
 ?>
 <!DOCTYPE html>
@@ -28,11 +29,36 @@ $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
     <main class="auth-container">
         <section class="auth-card">
             <header class="auth-toggle <?php echo $showReset ? 'hidden' : ''; ?>" id="auth-toggle-header">
-                <button id="btn-tab-login" class="toggle-btn active">Entrar</button>
-                <button id="btn-tab-register" class="toggle-btn">Cadastrar</button>
+                <button id="btn-tab-login" class="toggle-btn <?php echo (!$showReset && !$showRegister) ? 'active' : ''; ?>">Entrar</button>
+                <button id="btn-tab-register" class="toggle-btn <?php echo $showRegister ? 'active' : ''; ?>">Cadastrar</button>
             </header>
 
-            <article id="section-login" class="auth-section <?php echo $showReset ? 'hidden' : ''; ?>">
+            <section class="auth-messages">
+                <?php if(isset($_GET['erro'])): ?>
+                    <article class="alert alert-error">
+                        <?php 
+                            if($_GET['erro'] == 'credenciais_invalidas') echo "E-mail ou senha incorretos.";
+                            elseif($_GET['erro'] == 'dados_invalidos') echo "Preencha todos os campos corretamente.";
+                            elseif($_GET['erro'] == 'email_invalido') echo "O formato do e-mail informado é inválido.";
+                            elseif($_GET['erro'] == 'senhas_diferentes') echo "As senhas digitadas não coincidem.";
+                            elseif($_GET['erro'] == 'email_existente') echo "Este e-mail já está cadastrado em nossa base.";
+                            elseif($_GET['erro'] == 'email_nao_encontrado') echo "E-mail não localizado.";
+                            elseif($_GET['erro'] == 'codigo_invalido') echo "O código de recuperação informado é inválido.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+
+                <?php if(isset($_GET['sucesso'])): ?>
+                    <article class="alert alert-success">
+                        <?php 
+                            if($_GET['sucesso'] == 'cadastro_realizado') echo "Conta criada com sucesso! Faça seu login.";
+                            elseif($_GET['sucesso'] == 'senha_redefinida') echo "Sua senha foi atualizada. Acesse agora.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+            </section>
+
+            <article id="section-login" class="auth-section <?php echo ($showReset || $showRegister) ? 'hidden' : ''; ?>">
                 <header class="section-title">
                     <h1>Portal do Aluno</h1>
                     <p>Acesse sua conta para continuar aprendendo.</p>
@@ -46,12 +72,12 @@ $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
                         <label for="senha-login">Senha</label>
                         <input type="password" id="senha-login" name="senha" required>
                     </fieldset>
-                    <fieldset class="options-group">
+                    <section class="options-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="lembrar_me"> Lembrar-me
                         </label>
                         <button type="button" id="btn-show-forgot" class="link-btn">Esqueceu a senha?</button>
-                    </fieldset>
+                    </section>
                     <button type="submit" name="acao" value="login_aluno" class="btn-solid w-100">Acessar Plataforma</button>
                 </form>
             </article>
@@ -69,7 +95,7 @@ $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
                         <input type="email" id="email-recovery" name="email" required>
                     </fieldset>
                     <button type="submit" class="btn-solid w-100">Enviar Código</button>
-                    <button type="button" class="btn-back-login link-btn w-100">Voltar para o login</button>
+                    <button type="button" class="btn-back-login link-btn w-100 mt-1">Voltar para o login</button>
                 </form>
             </article>
 
@@ -98,11 +124,11 @@ $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
                         <input type="password" id="confirma-senha-reset" name="confirma_senha" required>
                     </fieldset>
                     <button type="submit" class="btn-solid w-100">Redefinir Senha</button>
-                    <a href="login_aluno.php" class="btn-back-login link-btn w-100" style="display: block; text-align: center; margin-top: 15px;">Voltar para o login</a>
+                    <a href="login_aluno.php" class="btn-back-login link-btn w-100 d-block text-center mt-1">Voltar para o login</a>
                 </form>
             </article>
 
-            <article id="section-register" class="auth-section hidden">
+            <article id="section-register" class="auth-section <?php echo $showRegister ? '' : 'hidden'; ?>">
                 <header class="section-title">
                     <h1>Criar Conta</h1>
                     <p>Inicie sua jornada gratuita agora mesmo.</p>
@@ -133,10 +159,10 @@ $emailReset = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
 
     <script src="../assets/js/script.js"></script>
 
-    <?php if (isset($_SESSION['flash_log'])): ?>
+    <?php if (isset($_SESSION['recuperacao_simulacao']) && $showReset): ?>
     <script>
-        console.log("<?php echo $_SESSION['flash_log']; ?>");
+        console.log("<?php echo $_SESSION['recuperacao_simulacao']; ?>");
     </script>
-    <?php unset($_SESSION['flash_log']); endif; ?>
+    <?php endif; ?>
 </body>
 </html>

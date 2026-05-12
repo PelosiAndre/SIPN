@@ -514,6 +514,68 @@ body {
     cursor: pointer;
 }
 
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.alert-error {
+    color: #d9534f;
+    background: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-success {
+    color: #3c763d;
+    background: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.form-large {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-medium {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-row {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 2rem;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.d-block {
+    display: block;
+}
+
 @media (max-width: 992px) {
     .features-split {
         grid-template-columns: 1fr;

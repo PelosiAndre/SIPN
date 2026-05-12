@@ -51,11 +51,11 @@ $entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </header>
 
             <section class="course-section">
-                <article class="admin-form-card" style="max-width: 900px; margin: 0 auto;">
+                <article class="admin-form-card form-large">
                     <form action="../controller/processa_admin.php" method="POST">
                         <input type="hidden" name="acao" value="cadastrar_curso">
                         
-                        <fieldset style="border: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <fieldset class="form-row">
                             <fieldset class="input-group">
                                 <label for="titulo">Título do Curso</label>
                                 <input type="text" id="titulo" name="titulo" required>
@@ -77,7 +77,7 @@ $entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <textarea id="descricao" name="descricao" rows="4" required></textarea>
                         </fieldset>
 
-                        <fieldset style="border: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <fieldset class="form-row">
                             <fieldset class="input-group">
                                 <label for="carga_horaria">Carga Horária (Total)</label>
                                 <input type="text" id="carga_horaria" name="carga_horaria" placeholder="Ex: 60h" required>
@@ -111,11 +111,11 @@ $entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </article>
                         </section>
 
-                        <button type="button" id="btn-add-lesson" class="btn-outline-small" style="margin-bottom: 2rem;">+ Adicionar Nova Aula</button>
+                        <button type="button" id="btn-add-lesson" class="btn-outline-small mb-2">+ Adicionar Nova Aula</button>
 
-                        <menu style="margin-top: 1rem; padding: 0; display: flex; gap: 1rem;">
+                        <menu class="form-actions mt-1">
                             <button type="submit" class="btn-solid w-100">Publicar Curso e Aulas</button>
-                            <a href="painel_funcionario.php" class="btn-outline w-100" style="text-align: center; display: inline-block;">Descartar</a>
+                            <a href="painel_funcionario.php" class="btn-outline w-100">Descartar</a>
                         </menu>
                     </form>
                 </article>

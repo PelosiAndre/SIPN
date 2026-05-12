@@ -46,7 +46,7 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
             </header>
 
             <section class="course-section">
-                <article class="admin-form-card" style="max-width: 600px; margin: 0 auto;">
+                <article class="admin-form-card form-medium">
                     <form action="../controller/processa_admin.php" method="POST">
                         <input type="hidden" name="acao" value="cadastrar_entidade">
                         
@@ -65,9 +65,9 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
                             <input type="email" id="email" name="email" required>
                         </fieldset>
 
-                        <menu style="margin-top: 2rem; padding: 0; display: flex; gap: 1rem;">
+                        <menu class="form-actions">
                             <button type="submit" class="btn-solid w-100">Finalizar Cadastro</button>
-                            <a href="painel_funcionario.php" class="btn-outline w-100" style="text-align: center; display: inline-block;">Cancelar</a>
+                            <a href="painel_funcionario.php" class="btn-outline w-100">Cancelar</a>
                         </menu>
                     </form>
                 </article>
