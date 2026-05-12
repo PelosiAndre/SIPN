@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('login-modal');
+    const deleteModal = document.getElementById('delete-modal');
+    
     const triggers = [
         document.getElementById('btn-login-trigger'),
         document.getElementById('btn-hero-login'),
@@ -15,6 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const toggleDeleteModal = (e) => {
+        if (e) e.preventDefault();
+        if(deleteModal) {
+            deleteModal.classList.toggle('modal-visible');
+            document.body.style.overflow = deleteModal.classList.contains('modal-visible') ? 'hidden' : '';
+            
+            if(!deleteModal.classList.contains('modal-visible')) {
+                document.getElementById('codigo-auth').value = '';
+            }
+        }
+    };
+
     triggers.forEach(trigger => {
         if (trigger) trigger.addEventListener('click', toggleModal);
     });
@@ -22,9 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('btn-close-modal');
     if (closeBtn) closeBtn.addEventListener('click', toggleModal);
 
+    const closeDeleteBtn = document.getElementById('btn-close-delete-modal');
+    if (closeDeleteBtn) closeDeleteBtn.addEventListener('click', toggleDeleteModal);
+
     if(modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) toggleModal();
+        });
+    }
+
+    if(deleteModal) {
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) toggleDeleteModal();
         });
     }
 
@@ -141,4 +164,66 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         });
     });
+
+    const deleteTriggers = document.querySelectorAll('.btn-delete-trigger');
+    deleteTriggers.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const type = this.getAttribute('data-type');
+            const id = this.getAttribute('data-id');
+            
+            document.getElementById('delete-tipo').value = type;
+            document.getElementById('delete-id').value = id;
+            
+            toggleDeleteModal();
+        });
+    });
+
+    const btnAddLesson = document.getElementById('btn-add-lesson');
+    const lessonsWrapper = document.getElementById('lessons-wrapper');
+
+    if (btnAddLesson && lessonsWrapper) {
+        btnAddLesson.addEventListener('click', () => {
+            const newRow = document.createElement('div');
+            newRow.classList.add('lesson-row');
+            newRow.innerHTML = `
+                <fieldset class="input-group">
+                    <label>Título da Aula</label>
+                    <input type="text" name="aula_titulo[]" required>
+                </fieldset>
+                <fieldset class="input-group">
+                    <label>Duração</label>
+                    <input type="text" name="aula_duracao[]" placeholder="Ex: 15:30" required>
+                </fieldset>
+                <fieldset class="input-group">
+                    <label>URL do Vídeo</label>
+                    <input type="url" name="aula_video[]" placeholder="https://..." required>
+                </fieldset>
+                <button type="button" class="btn-remove-lesson">X</button>
+            `;
+            lessonsWrapper.appendChild(newRow);
+            updateRemoveButtons();
+        });
+
+        lessonsWrapper.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-remove-lesson')) {
+                const row = e.target.closest('.lesson-row');
+                if(lessonsWrapper.children.length > 1) {
+                    row.remove();
+                    updateRemoveButtons();
+                }
+            }
+        });
+
+        function updateRemoveButtons() {
+            const removeBtns = lessonsWrapper.querySelectorAll('.btn-remove-lesson');
+            if (removeBtns.length === 1) {
+                removeBtns[0].disabled = true;
+            } else {
+                removeBtns.forEach(btn => btn.disabled = false);
+            }
+        }
+        
+        updateRemoveButtons();
+    }
 });
