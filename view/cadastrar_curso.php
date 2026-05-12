@@ -10,11 +10,10 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
     }
 }
 
-$entidades = [
-    ['id' => 1, 'nome' => 'Fatec'],
-    ['id' => 2, 'nome' => 'Sebrae'],
-    ['id' => 3, 'nome' => 'Instituto Tecnológico']
-];
+require_once '../controller/conexao.php';
+
+$stmt = $pdo->query("SELECT id, nome FROM entidades ORDER BY nome ASC");
+$entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -56,7 +55,7 @@ $entidades = [
                     <form action="../controller/processa_admin.php" method="POST">
                         <input type="hidden" name="acao" value="cadastrar_curso">
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <fieldset style="border: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                             <fieldset class="input-group">
                                 <label for="titulo">Título do Curso</label>
                                 <input type="text" id="titulo" name="titulo" required>
@@ -71,14 +70,14 @@ $entidades = [
                                     <?php endforeach; ?>
                                 </select>
                             </fieldset>
-                        </div>
+                        </fieldset>
 
                         <fieldset class="input-group">
                             <label for="descricao">Descrição Completa</label>
                             <textarea id="descricao" name="descricao" rows="4" required></textarea>
                         </fieldset>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <fieldset style="border: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                             <fieldset class="input-group">
                                 <label for="carga_horaria">Carga Horária (Total)</label>
                                 <input type="text" id="carga_horaria" name="carga_horaria" placeholder="Ex: 60h" required>
@@ -88,14 +87,14 @@ $entidades = [
                                 <label for="imagem_capa">URL da Imagem de Capa</label>
                                 <input type="url" id="imagem_capa" name="imagem_capa" placeholder="https://exemplo.com/imagem.png" required>
                             </fieldset>
-                        </div>
+                        </fieldset>
 
-                        <div class="section-divider">
+                        <header class="section-divider">
                             <h3>Aulas do Curso</h3>
-                        </div>
+                        </header>
 
-                        <div id="lessons-wrapper">
-                            <div class="lesson-row">
+                        <section id="lessons-wrapper">
+                            <article class="lesson-row">
                                 <fieldset class="input-group">
                                     <label>Título da Aula</label>
                                     <input type="text" name="aula_titulo[]" required>
@@ -109,15 +108,15 @@ $entidades = [
                                     <input type="url" name="aula_video[]" placeholder="https://..." required>
                                 </fieldset>
                                 <button type="button" class="btn-remove-lesson" disabled>X</button>
-                            </div>
-                        </div>
+                            </article>
+                        </section>
 
                         <button type="button" id="btn-add-lesson" class="btn-outline-small" style="margin-bottom: 2rem;">+ Adicionar Nova Aula</button>
 
-                        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        <menu style="margin-top: 1rem; padding: 0; display: flex; gap: 1rem;">
                             <button type="submit" class="btn-solid w-100">Publicar Curso e Aulas</button>
-                            <a href="painel_funcionario.php" class="btn-outline w-100">Descartar</a>
-                        </div>
+                            <a href="painel_funcionario.php" class="btn-outline w-100" style="text-align: center; display: inline-block;">Descartar</a>
+                        </menu>
                     </form>
                 </article>
             </section>

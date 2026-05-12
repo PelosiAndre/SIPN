@@ -65,10 +65,10 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
                             <input type="email" id="email" name="email" required>
                         </fieldset>
 
-                        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                        <menu style="margin-top: 2rem; padding: 0; display: flex; gap: 1rem;">
                             <button type="submit" class="btn-solid w-100">Finalizar Cadastro</button>
-                            <a href="painel_funcionario.php" class="btn-outline w-100">Cancelar</a>
-                        </div>
+                            <a href="painel_funcionario.php" class="btn-outline w-100" style="text-align: center; display: inline-block;">Cancelar</a>
+                        </menu>
                     </form>
                 </article>
             </section>
