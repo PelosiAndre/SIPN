@@ -10,31 +10,34 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'aluno') 
     }
 }
 
-$nome_aluno = "Estudante SIPN"; 
+require_once '../controller/conexao.php';
 
-$certificados = [
-    [
-        'id_certificado' => 'CERT-2026-A001',
-        'curso_titulo' => 'Lógica de Programação e Algoritmos',
-        'entidade' => 'Fatec',
-        'data_conclusao' => '15/04/2026',
-        'carga_horaria' => '40h'
-    ],
-    [
-        'id_certificado' => 'CERT-2026-B042',
-        'curso_titulo' => 'Introdução ao Marketing Digital',
-        'entidade' => 'Sebrae',
-        'data_conclusao' => '02/05/2026',
-        'carga_horaria' => '20h'
-    ],
-    [
-        'id_certificado' => 'CERT-2026-C109',
-        'curso_titulo' => 'Gestão Financeira para Iniciantes',
-        'entidade' => 'Instituto Tecnológico',
-        'data_conclusao' => '10/05/2026',
-        'carga_horaria' => '15h'
-    ]
-];
+$usuario_id = $_SESSION['usuario_id'] ?? 0;
+
+$sql = "SELECT c.codigo_autenticacao AS id_certificado,
+               c.curso_titulo_snapshot AS curso_titulo,
+               c.entidade_nome_snapshot AS entidade,
+               c.carga_horaria_snapshot AS carga_horaria,
+               DATE_FORMAT(c.data_emissao, '%d/%m/%Y') AS data_conclusao,
+               u.nome AS nome_aluno
+        FROM certificados c
+        JOIN usuarios u ON c.aluno_id = u.id
+        WHERE c.aluno_id = ?";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$usuario_id]);
+$certificados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$nome_aluno = "Estudante SIPN";
+if (count($certificados) > 0) {
+    $nome_aluno = $certificados[0]['nome_aluno'];
+} elseif ($usuario_id > 0) {
+    $stmt_user = $pdo->prepare("SELECT nome FROM usuarios WHERE id = ?");
+    $stmt_user->execute([$usuario_id]);
+    $user_data = $stmt_user->fetch(PDO::FETCH_ASSOC);
+    if ($user_data) {
+        $nome_aluno = $user_data['nome'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -70,7 +73,7 @@ $certificados = [
 
             <section class="cert-grid">
                 <?php foreach ($certificados as $cert): ?>
-                <article class="cert-card" id="card-<?php echo $cert['id_certificado']; ?>">
+                <article class="cert-card" id="card-<?php echo htmlspecialchars($cert['id_certificado']); ?>">
                     <header class="cert-header">
                         <span class="cert-icon">🏆</span>
                         <span class="cert-entity"><?php echo htmlspecialchars($cert['entidade']); ?></span>
@@ -80,21 +83,21 @@ $certificados = [
                         <p class="cert-text">concluiu com êxito o curso completo de</p>
                         <h3 class="cert-course"><?php echo htmlspecialchars($cert['curso_titulo']); ?></h3>
                         
-                        <div class="cert-details">
-                            <div class="detail-item">
+                        <section class="cert-details">
+                            <article class="detail-item">
                                 <span class="detail-label">Carga Horária</span>
-                                <span class="detail-value"><?php echo $cert['carga_horaria']; ?></span>
-                            </div>
-                            <div class="detail-divider"></div>
-                            <div class="detail-item">
+                                <span class="detail-value"><?php echo htmlspecialchars($cert['carga_horaria']); ?></span>
+                            </article>
+                            <hr class="detail-divider">
+                            <article class="detail-item">
                                 <span class="detail-label">Data de Conclusão</span>
-                                <span class="detail-value"><?php echo $cert['data_conclusao']; ?></span>
-                            </div>
-                        </div>
+                                <span class="detail-value"><?php echo htmlspecialchars($cert['data_conclusao']); ?></span>
+                            </article>
+                        </section>
                         <p class="cert-code">Código de Autenticação: <?php echo htmlspecialchars($cert['id_certificado']); ?></p>
                     </section>
                     <footer class="cert-footer">
-                        <button class="btn-solid w-100 btn-download-cert" data-target="card-<?php echo $cert['id_certificado']; ?>">Baixar PDF</button>
+                        <button class="btn-solid w-100 btn-download-cert" data-target="card-<?php echo htmlspecialchars($cert['id_certificado']); ?>">Baixar PDF</button>
                     </footer>
                 </article>
                 <?php endforeach; ?>

@@ -47,7 +47,7 @@ $entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <main class="dashboard-content">
             <header class="content-header">
                 <h2>Cadastrar Novo Curso</h2>
-                <p>Preencha todas as informações e vincule as aulas ao curso.</p>
+                <p>Insira as informações gerais e os links do YouTube. O sistema calculará a carga horária e os títulos automaticamente.</p>
             </header>
 
             <section class="course-section">
@@ -77,44 +77,29 @@ $entidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <textarea id="descricao" name="descricao" rows="4" required></textarea>
                         </fieldset>
 
-                        <fieldset class="form-row">
-                            <fieldset class="input-group">
-                                <label for="carga_horaria">Carga Horária (Total)</label>
-                                <input type="text" id="carga_horaria" name="carga_horaria" placeholder="Ex: 60h" required>
-                            </fieldset>
-
-                            <fieldset class="input-group">
-                                <label for="imagem_capa">URL da Imagem de Capa</label>
-                                <input type="url" id="imagem_capa" name="imagem_capa" placeholder="https://exemplo.com/imagem.png" required>
-                            </fieldset>
+                        <fieldset class="input-group">
+                            <label for="imagem_capa">URL da Imagem de Capa</label>
+                            <input type="url" id="imagem_capa" name="imagem_capa" placeholder="https://exemplo.com/imagem.png" required>
                         </fieldset>
 
-                        <header class="section-divider">
-                            <h3>Aulas do Curso</h3>
+                        <header class="section-divider mt-1">
+                            <h3>Aulas do Curso (Links do YouTube)</h3>
                         </header>
 
                         <section id="lessons-wrapper">
-                            <article class="lesson-row">
-                                <fieldset class="input-group">
-                                    <label>Título da Aula</label>
-                                    <input type="text" name="aula_titulo[]" required>
-                                </fieldset>
-                                <fieldset class="input-group">
-                                    <label>Duração</label>
-                                    <input type="text" name="aula_duracao[]" placeholder="Ex: 15:30" required>
-                                </fieldset>
-                                <fieldset class="input-group">
+                            <article class="lesson-row-dynamic">
+                                <fieldset class="input-group input-group-flex">
                                     <label>URL do Vídeo</label>
-                                    <input type="url" name="aula_video[]" placeholder="https://..." required>
+                                    <input type="url" name="aula_video[]" placeholder="https://www.youtube.com/watch?v=..." required>
                                 </fieldset>
-                                <button type="button" class="btn-remove-lesson" disabled>X</button>
+                                <button type="button" class="btn-remove-lesson btn-outline-small" disabled>X</button>
                             </article>
                         </section>
 
                         <button type="button" id="btn-add-lesson" class="btn-outline-small mb-2">+ Adicionar Nova Aula</button>
 
                         <menu class="form-actions mt-1">
-                            <button type="submit" class="btn-solid w-100">Publicar Curso e Aulas</button>
+                            <button type="submit" class="btn-solid w-100">Processar e Publicar Curso</button>
                             <a href="painel_funcionario.php" class="btn-outline w-100">Descartar</a>
                         </menu>
                     </form>

@@ -562,6 +562,49 @@ progress::-moz-progress-bar {
     }
 }
 
+.empty-state {
+    padding: 3rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 2px dashed #e2e8f0;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.empty-state p {
+    color: var(--text-light);
+}
+
+.badge-concluido {
+    background: #dff0d8;
+    color: #3c763d;
+    padding: 0.2rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.lesson-row-dynamic {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-group-flex {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.course-card-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .lesson-row {
         grid-template-columns: 1fr;

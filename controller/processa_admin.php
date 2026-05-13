@@ -3,6 +3,45 @@ session_start();
 
 require_once 'conexao.php';
 
+function obterDadosYoutube($url) {
+    $videoId = '';
+    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $url, $match)) {
+        $videoId = $match[1];
+    }
+
+    $titulo = "Aula do YouTube";
+    $duracaoStr = "00:00";
+    $segundosTotal = 0;
+
+    if ($videoId) {
+        $oembed_url = "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" . $videoId . "&format=json";
+        $oembed_data = @file_get_contents($oembed_url);
+        if ($oembed_data) {
+            $json = json_decode($oembed_data, true);
+            if (isset($json['title'])) {
+                $titulo = $json['title'];
+            }
+        }
+
+        $html = @file_get_contents("https://www.youtube.com/watch?v=" . $videoId);
+        if ($html && preg_match('/"approxDurationMs":"(\d+)"/', $html, $matches)) {
+            $segundosTotal = round($matches[1] / 1000);
+            if ($segundosTotal >= 3600) {
+                $duracaoStr = gmdate("H:i:s", $segundosTotal);
+            } else {
+                $duracaoStr = gmdate("i:s", $segundosTotal);
+            }
+        }
+    }
+
+    return [
+        'titulo' => $titulo,
+        'duracao' => $duracaoStr,
+        'segundos' => $segundosTotal,
+        'video_url' => $url
+    ];
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $acao = $_POST['acao'] ?? '';
 
@@ -27,12 +66,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $titulo = $_POST['titulo'] ?? '';
             $entidade_id = $_POST['entidade_id'] ?? '';
             $descricao = $_POST['descricao'] ?? '';
-            $carga_horaria = $_POST['carga_horaria'] ?? '';
             $imagem_capa = $_POST['imagem_capa'] ?? '';
-
-            $aula_titulo = $_POST['aula_titulo'] ?? [];
-            $aula_duracao = $_POST['aula_duracao'] ?? [];
             $aula_video = $_POST['aula_video'] ?? [];
+
+            $dados_aulas = [];
+            $total_segundos_curso = 0;
+
+            foreach ($aula_video as $url) {
+                if (!empty($url)) {
+                    $info = obterDadosYoutube($url);
+                    $dados_aulas[] = $info;
+                    $total_segundos_curso += $info['segundos'];
+                }
+            }
+
+            $horas = floor($total_segundos_curso / 3600);
+            $minutos = floor(($total_segundos_curso % 3600) / 60);
+            
+            if ($horas > 0) {
+                $carga_horaria = $horas . "h " . $minutos . "m";
+            } else {
+                $carga_horaria = $minutos . "m";
+            }
 
             try {
                 $pdo->beginTransaction();
@@ -43,19 +98,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 $curso_id = $pdo->lastInsertId();
 
-                if (!empty($aula_titulo)) {
+                if (!empty($dados_aulas)) {
                     $sqlAula = "INSERT INTO aulas (curso_id, titulo, duracao, video_url) VALUES (?, ?, ?, ?)";
                     $stmtAula = $pdo->prepare($sqlAula);
 
-                    for ($i = 0; $i < count($aula_titulo); $i++) {
-                        if (!empty($aula_titulo[$i]) && !empty($aula_duracao[$i]) && !empty($aula_video[$i])) {
-                            $stmtAula->execute([
-                                $curso_id,
-                                $aula_titulo[$i],
-                                $aula_duracao[$i],
-                                $aula_video[$i]
-                            ]);
-                        }
+                    foreach ($dados_aulas as $aula) {
+                        $stmtAula->execute([
+                            $curso_id,
+                            $aula['titulo'],
+                            $aula['duracao'],
+                            $aula['video_url']
+                        ]);
                     }
                 }
 
