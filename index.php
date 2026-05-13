@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIPN - Educação Gratuita de Qualidade</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 <body>
     <header id="main-header">
@@ -13,6 +14,7 @@
                 <img src="assets/img/logo.png" alt="Logo SIPN" class="logo-img">
             </figure>
             <section class="nav-actions">
+                <a href="view/verificar_certificados.php" class="btn-outline">Verificar Certificado</a>
                 <button id="btn-login-trigger" class="btn-outline">Acessar</button>
             </section>
         </nav>
@@ -78,6 +80,7 @@
             <nav class="footer-nav">
                 <a href="#">Diretrizes</a>
                 <a href="#">Privacidade</a>
+                <a href="view/verificar_certificados.php">Verificar Certificado</a>
                 <a href="#">Contato</a>
             </nav>
         </section>
