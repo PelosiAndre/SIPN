@@ -10,17 +10,22 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
     }
 }
 
-$cursos = [
-    ['id' => 1, 'titulo' => 'Desenvolvimento Back-End com PHP', 'entidade_id' => 1, 'entidade' => 'Fatec', 'descricao' => 'Aprenda a criar aplicações robustas utilizando PHP.', 'carga_horaria' => '60h', 'imagem_capa' => 'https://exemplo.com/php.png'],
-    ['id' => 2, 'titulo' => 'Marketing Digital na Prática', 'entidade_id' => 2, 'entidade' => 'Sebrae', 'descricao' => 'Estratégias completas de marketing digital.', 'carga_horaria' => '40h', 'imagem_capa' => 'https://exemplo.com/mkt.png'],
-    ['id' => 3, 'titulo' => 'Gestão Ágil de Projetos', 'entidade_id' => 3, 'entidade' => 'Instituto Tecnológico', 'descricao' => 'Implemente metodologias ágeis na sua equipe.', 'carga_horaria' => '20h', 'imagem_capa' => 'https://exemplo.com/agil.png']
-];
+require_once '../controller/conexao.php';
 
-$entidades = [
-    ['id' => 1, 'nome' => 'Fatec'],
-    ['id' => 2, 'nome' => 'Sebrae'],
-    ['id' => 3, 'nome' => 'Instituto Tecnológico']
-];
+if (!isset($_SESSION['codigo_exclusao'])) {
+    $_SESSION['codigo_exclusao'] = 'DEL-' . rand(1000, 9999);
+}
+
+$stmtCursos = $pdo->query("
+    SELECT c.id, c.titulo, c.descricao, c.carga_horaria, c.imagem_capa, c.entidade_id, e.nome AS entidade 
+    FROM cursos c 
+    JOIN entidades e ON c.entidade_id = e.id 
+    ORDER BY c.id ASC
+");
+$cursos = $stmtCursos->fetchAll(PDO::FETCH_ASSOC);
+
+$stmtEntidades = $pdo->query("SELECT id, nome FROM entidades ORDER BY nome ASC");
+$entidades = $stmtEntidades->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -54,17 +59,40 @@ $entidades = [
         <main class="dashboard-content">
             <header class="content-header">
                 <h2>Gerenciar Cursos</h2>
-                <p>Edite detalhes, atualize descrições, modifique aulas ou remova cursos do catálogo.</p>
+                <p>Edite detalhes, atualize descrições ou remova cursos do catálogo.</p>
             </header>
 
+            <section class="auth-messages" style="max-width: 1000px;">
+                <?php if(isset($_GET['erro'])): ?>
+                    <article class="alert alert-error">
+                        <?php 
+                            if($_GET['erro'] == 'codigo_invalido') echo "O código de exclusão informado é inválido.";
+                            elseif($_GET['erro'] == 'dados_invalidos') echo "Preencha todos os campos corretamente.";
+                            elseif($_GET['erro'] == 'falha_banco') echo "Erro: Este curso possui alunos matriculados e não pode ser excluído.";
+                            else echo "Ocorreu um erro na operação.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+
+                <?php if(isset($_GET['sucesso'])): ?>
+                    <article class="alert alert-success">
+                        <?php 
+                            if($_GET['sucesso'] == 'deletado') echo "Curso excluído permanentemente do catálogo.";
+                            elseif($_GET['sucesso'] == 'editado') echo "Informações do curso atualizadas com sucesso.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+            </section>
+
             <section class="course-section">
-                <div class="table-responsive">
+                <article class="table-responsive">
                     <table class="admin-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Título do Curso</th>
                                 <th>Entidade</th>
+                                <th>Carga Horária</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -74,13 +102,13 @@ $entidades = [
                                 <td><?php echo $curso['id']; ?></td>
                                 <td><?php echo htmlspecialchars($curso['titulo']); ?></td>
                                 <td><?php echo htmlspecialchars($curso['entidade']); ?></td>
+                                <td><?php echo htmlspecialchars($curso['carga_horaria']); ?></td>
                                 <td>
                                     <button class="btn-edit btn-edit-trigger" data-type="curso" 
                                         data-id="<?php echo $curso['id']; ?>" 
                                         data-titulo="<?php echo htmlspecialchars($curso['titulo']); ?>" 
                                         data-entidade="<?php echo $curso['entidade_id']; ?>"
                                         data-descricao="<?php echo htmlspecialchars($curso['descricao']); ?>"
-                                        data-carga="<?php echo htmlspecialchars($curso['carga_horaria']); ?>"
                                         data-imagem="<?php echo htmlspecialchars($curso['imagem_capa']); ?>">Editar</button>
                                     <button class="btn-danger btn-delete-trigger" data-type="curso" data-id="<?php echo $curso['id']; ?>">Deletar</button>
                                 </td>
@@ -88,7 +116,7 @@ $entidades = [
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
+                </article>
             </section>
         </main>
     </section>
@@ -104,20 +132,20 @@ $entidades = [
                 <input type="hidden" name="tipo_item" id="delete-tipo">
                 <input type="hidden" name="id_item" id="delete-id">
                 
-                <p style="margin-bottom: 1.5rem; color: #4a5568;">Esta ação é irreversível. Por favor, insira seu código de autorização especial para prosseguir.</p>
+                <p class="text-warning-muted">Esta ação é irreversível. Por favor, insira o código de exclusão para prosseguir.</p>
                 
                 <fieldset class="input-group">
-                    <label for="codigo-auth">Código de Autorização (DEL2026)</label>
-                    <input type="password" id="codigo-auth" name="codigo_auth" required>
+                    <label for="codigo-auth">Código de Autorização</label>
+                    <input type="text" id="codigo-auth" name="codigo_auth" required autocomplete="off">
                 </fieldset>
                 
-                <button type="submit" class="btn-solid w-100" style="background: #e53e3e;">Confirmar Exclusão</button>
+                <button type="submit" class="btn-solid-danger w-100 btn-solid">Confirmar Exclusão</button>
             </form>
         </article>
     </section>
 
     <section id="edit-modal-curso" class="modal-hidden">
-        <article class="login-card" style="max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <article class="login-card modal-large">
             <header class="card-header">
                 <h2>Editar Curso</h2>
                 <button id="btn-close-edit-curso" class="close-btn-modal">×</button>
@@ -126,7 +154,7 @@ $entidades = [
                 <input type="hidden" name="acao" value="editar_curso">
                 <input type="hidden" name="id" id="edit-curso-id">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <fieldset class="form-row">
                     <fieldset class="input-group">
                         <label for="edit-curso-titulo">Título do Curso</label>
                         <input type="text" id="edit-curso-titulo" name="titulo" required>
@@ -140,54 +168,29 @@ $entidades = [
                             <?php endforeach; ?>
                         </select>
                     </fieldset>
-                </div>
+                </fieldset>
 
                 <fieldset class="input-group">
                     <label for="edit-curso-descricao">Descrição Completa</label>
                     <textarea id="edit-curso-descricao" name="descricao" rows="4" required></textarea>
                 </fieldset>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <fieldset class="input-group">
-                        <label for="edit-curso-carga">Carga Horária</label>
-                        <input type="text" id="edit-curso-carga" name="carga_horaria" required>
-                    </fieldset>
+                <fieldset class="input-group">
+                    <label for="edit-curso-imagem">URL da Imagem de Capa</label>
+                    <input type="url" id="edit-curso-imagem" name="imagem_capa" required>
+                </fieldset>
 
-                    <fieldset class="input-group">
-                        <label for="edit-curso-imagem">URL Imagem Capa</label>
-                        <input type="url" id="edit-curso-imagem" name="imagem_capa" required>
-                    </fieldset>
-                </div>
-                
-                <div class="section-divider">
-                    <h3>Aulas do Curso</h3>
-                </div>
-
-                <div id="edit-lessons-wrapper">
-                    <div class="lesson-row">
-                        <fieldset class="input-group">
-                            <label>Título da Aula</label>
-                            <input type="text" name="aula_titulo[]" value="Introdução ao Curso" required>
-                        </fieldset>
-                        <fieldset class="input-group">
-                            <label>Duração</label>
-                            <input type="text" name="aula_duracao[]" value="10:00" required>
-                        </fieldset>
-                        <fieldset class="input-group">
-                            <label>URL do Vídeo</label>
-                            <input type="url" name="aula_video[]" value="https://exemplo.com/v1" required>
-                        </fieldset>
-                        <button type="button" class="btn-remove-lesson" disabled>X</button>
-                    </div>
-                </div>
-
-                <button type="button" id="btn-add-edit-lesson" class="btn-outline-small" style="margin-bottom: 2rem;">+ Adicionar Nova Aula</button>
-
-                <button type="submit" class="btn-solid w-100" style="background: #3182ce;">Salvar Alterações</button>
+                <button type="submit" class="btn-solid-edit w-100 btn-solid mt-1">Salvar Alterações</button>
             </form>
         </article>
     </section>
 
     <script src="../assets/js/script.js"></script>
+
+    <?php if (isset($_SESSION['codigo_exclusao'])): ?>
+    <script>
+        console.log("[SISTEMA - ALERTA] CÓDIGO DE AUTORIZAÇÃO PARA EXCLUSÃO: <?php echo $_SESSION['codigo_exclusao']; ?>");
+    </script>
+    <?php endif; ?>
 </body>
 </html>

@@ -145,6 +145,147 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const deleteTriggers = document.querySelectorAll('.btn-delete-trigger');
+    deleteTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const type = btn.getAttribute('data-type');
+            
+            const inputId = document.getElementById('delete-id');
+            const inputType = document.getElementById('delete-tipo');
+            
+            if(inputId) inputId.value = id;
+            if(inputType) inputType.value = type;
+            
+            toggleDeleteModal();
+        });
+    });
+
+    const btnCloseDeleteModalAlt = document.getElementById('btn-close-delete-modal');
+    if(btnCloseDeleteModalAlt) btnCloseDeleteModalAlt.addEventListener('click', toggleDeleteModal);
+
+    const editFuncTriggers = document.querySelectorAll('.btn-edit-trigger[data-type="funcionario"]');
+    editFuncTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const nome = btn.getAttribute('data-nome');
+            const email = btn.getAttribute('data-email');
+            
+            const inputId = document.getElementById('edit-func-id');
+            const inputNome = document.getElementById('edit-func-nome');
+            const inputEmail = document.getElementById('edit-func-email');
+            
+            if(inputId) inputId.value = id;
+            if(inputNome) inputNome.value = nome;
+            if(inputEmail) inputEmail.value = email;
+            
+            toggleEditModal(document.getElementById('edit-modal-funcionario'));
+        });
+    });
+
+    const btnCloseEditFunc = document.getElementById('btn-close-edit-funcionario');
+    if(btnCloseEditFunc) {
+        btnCloseEditFunc.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleEditModal(document.getElementById('edit-modal-funcionario'));
+        });
+    }
+
+    const editAlunoTriggers = document.querySelectorAll('.btn-edit-trigger[data-type="aluno"]');
+    editAlunoTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const nome = btn.getAttribute('data-nome');
+            const email = btn.getAttribute('data-email');
+            
+            const inputId = document.getElementById('edit-aluno-id');
+            const inputNome = document.getElementById('edit-aluno-nome');
+            const inputEmail = document.getElementById('edit-aluno-email');
+            
+            if(inputId) inputId.value = id;
+            if(inputNome) inputNome.value = nome;
+            if(inputEmail) inputEmail.value = email;
+            
+            toggleEditModal(document.getElementById('edit-modal-aluno'));
+        });
+    });
+
+    const btnCloseEditAluno = document.getElementById('btn-close-edit-aluno');
+    if(btnCloseEditAluno) {
+        btnCloseEditAluno.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleEditModal(document.getElementById('edit-modal-aluno'));
+        });
+    }
+
+    const editEntidadeTriggers = document.querySelectorAll('.btn-edit-trigger[data-type="entidade"]');
+    editEntidadeTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const nome = btn.getAttribute('data-nome');
+            const cnpj = btn.getAttribute('data-cnpj');
+            const email = btn.getAttribute('data-email');
+            
+            const inputId = document.getElementById('edit-entidade-id');
+            const inputNome = document.getElementById('edit-entidade-nome');
+            const inputCnpj = document.getElementById('edit-entidade-cnpj');
+            const inputEmail = document.getElementById('edit-entidade-email');
+            
+            if(inputId) inputId.value = id;
+            if(inputNome) inputNome.value = nome;
+            if(inputCnpj) inputCnpj.value = cnpj;
+            if(inputEmail) inputEmail.value = email;
+            
+            toggleEditModal(document.getElementById('edit-modal-entidade'));
+        });
+    });
+
+    const btnCloseEditEntidade = document.getElementById('btn-close-edit-entidade');
+    if(btnCloseEditEntidade) {
+        btnCloseEditEntidade.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleEditModal(document.getElementById('edit-modal-entidade'));
+        });
+    }
+
+    const editCursoTriggers = document.querySelectorAll('.btn-edit-trigger[data-type="curso"]');
+    editCursoTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            const titulo = btn.getAttribute('data-titulo');
+            const entidade = btn.getAttribute('data-entidade');
+            const descricao = btn.getAttribute('data-descricao');
+            const imagem = btn.getAttribute('data-imagem');
+            
+            const inputId = document.getElementById('edit-curso-id');
+            const inputTitulo = document.getElementById('edit-curso-titulo');
+            const selectEntidade = document.getElementById('edit-curso-entidade');
+            const inputDescricao = document.getElementById('edit-curso-descricao');
+            const inputImagem = document.getElementById('edit-curso-imagem');
+            
+            if(inputId) inputId.value = id;
+            if(inputTitulo) inputTitulo.value = titulo;
+            if(selectEntidade) selectEntidade.value = entidade;
+            if(inputDescricao) inputDescricao.value = descricao;
+            if(inputImagem) inputImagem.value = imagem;
+            
+            toggleEditModal(document.getElementById('edit-modal-curso'));
+        });
+    });
+
+    const btnCloseEditCurso = document.getElementById('btn-close-edit-curso');
+    if(btnCloseEditCurso) {
+        btnCloseEditCurso.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleEditModal(document.getElementById('edit-modal-curso'));
+        });
+    }
+
     function setupLessonDynamic(wrapperId, btnId) {
         const wrapper = document.getElementById(wrapperId);
         const btn = document.getElementById(btnId);
@@ -188,5 +329,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupLessonDynamic('lessons-wrapper', 'btn-add-lesson');
-    setupLessonDynamic('edit-lessons-wrapper', 'btn-add-edit-lesson');
 });

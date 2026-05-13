@@ -9,6 +9,20 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
         $_SESSION['usuario_tipo'] = 'funcionario';
     }
 }
+
+require_once '../controller/conexao.php';
+
+$funcionario_id = $_SESSION['usuario_id'] ?? 0;
+
+$stmtNome = $pdo->prepare("SELECT nome FROM usuarios WHERE id = ?");
+$stmtNome->execute([$funcionario_id]);
+$usuarioInfo = $stmtNome->fetch(PDO::FETCH_ASSOC);
+
+$primeiro_nome = "Administrador";
+if ($usuarioInfo && !empty($usuarioInfo['nome'])) {
+    $partes_nome = explode(' ', $usuarioInfo['nome']);
+    $primeiro_nome = htmlspecialchars($partes_nome[0]);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -41,8 +55,8 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
 
         <main class="dashboard-content">
             <header class="content-header">
-                <h2>Painel Administrativo SIPN</h2>
-                <p>Bem-vindo! Selecione uma das opções abaixo para gerenciar a plataforma.</p>
+                <h2>Olá, <?php echo $primeiro_nome; ?>!</h2>
+                <p>Selecione uma das opções abaixo para gerenciar a plataforma.</p>
             </header>
 
             <section class="course-section">
@@ -63,7 +77,7 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
                 </article>
             </section>
 
-            <section class="course-section" style="margin-top: 4rem;">
+            <section class="course-section mt-4">
                 <header class="section-header">
                     <h2>Gerenciamento de Dados</h2>
                 </header>

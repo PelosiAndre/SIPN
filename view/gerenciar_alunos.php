@@ -10,11 +10,14 @@ if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'funciona
     }
 }
 
-$alunos = [
-    ['id' => 1, 'nome' => 'Ana Silva', 'email' => 'ana@email.com'],
-    ['id' => 2, 'nome' => 'Carlos Souza', 'email' => 'carlos@email.com'],
-    ['id' => 3, 'nome' => 'Beatriz Lima', 'email' => 'beatriz@email.com']
-];
+require_once '../controller/conexao.php';
+
+if (!isset($_SESSION['codigo_exclusao'])) {
+    $_SESSION['codigo_exclusao'] = 'DEL-' . rand(1000, 9999);
+}
+
+$stmt = $pdo->query("SELECT id, nome, email FROM usuarios WHERE tipo = 'aluno' ORDER BY id ASC");
+$alunos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -51,8 +54,30 @@ $alunos = [
                 <p>Visualize, edite as informações ou remova alunos cadastrados na plataforma.</p>
             </header>
 
+            <section class="auth-messages form-large">
+                <?php if(isset($_GET['erro'])): ?>
+                    <article class="alert alert-error">
+                        <?php 
+                            if($_GET['erro'] == 'codigo_invalido') echo "O código de exclusão informado é inválido.";
+                            elseif($_GET['erro'] == 'email_existente') echo "Já existe outro usuário com este e-mail.";
+                            elseif($_GET['erro'] == 'dados_invalidos') echo "Preencha todos os campos corretamente.";
+                            else echo "Ocorreu um erro na operação.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+
+                <?php if(isset($_GET['sucesso'])): ?>
+                    <article class="alert alert-success">
+                        <?php 
+                            if($_GET['sucesso'] == 'deletado') echo "Aluno excluído permanentemente do sistema.";
+                            elseif($_GET['sucesso'] == 'editado') echo "Informações do aluno atualizadas com sucesso.";
+                        ?>
+                    </article>
+                <?php endif; ?>
+            </section>
+
             <section class="course-section">
-                <div class="table-responsive">
+                <article class="table-responsive">
                     <table class="admin-table">
                         <thead>
                             <tr>
@@ -76,7 +101,7 @@ $alunos = [
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
+                </article>
             </section>
         </main>
     </section>
@@ -92,14 +117,14 @@ $alunos = [
                 <input type="hidden" name="tipo_item" id="delete-tipo">
                 <input type="hidden" name="id_item" id="delete-id">
                 
-                <p style="margin-bottom: 1.5rem; color: #4a5568;">Esta ação é irreversível. Por favor, insira seu código de autorização especial para prosseguir.</p>
+                <p class="text-warning-muted">Esta ação é irreversível. Por favor, insira o código de exclusão para prosseguir.</p>
                 
                 <fieldset class="input-group">
-                    <label for="codigo-auth">Código de Autorização (DEL2026)</label>
-                    <input type="password" id="codigo-auth" name="codigo_auth" required>
+                    <label for="codigo-auth">Código de Autorização</label>
+                    <input type="text" id="codigo-auth" name="codigo_auth" required autocomplete="off">
                 </fieldset>
                 
-                <button type="submit" class="btn-solid w-100" style="background: #e53e3e;">Confirmar Exclusão</button>
+                <button type="submit" class="btn-solid-danger w-100 btn-solid">Confirmar Exclusão</button>
             </form>
         </article>
     </section>
@@ -124,11 +149,17 @@ $alunos = [
                     <input type="email" id="edit-aluno-email" name="email" required>
                 </fieldset>
                 
-                <button type="submit" class="btn-solid w-100" style="background: #3182ce;">Salvar Alterações</button>
+                <button type="submit" class="btn-solid-edit w-100 btn-solid">Salvar Alterações</button>
             </form>
         </article>
     </section>
 
     <script src="../assets/js/script.js"></script>
+
+    <?php if (isset($_SESSION['codigo_exclusao'])): ?>
+    <script>
+        console.log("[SISTEMA - ALERTA] CÓDIGO DE AUTORIZAÇÃO PARA EXCLUSÃO: <?php echo $_SESSION['codigo_exclusao']; ?>");
+    </script>
+    <?php endif; ?>
 </body>
 </html>

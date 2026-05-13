@@ -1,4 +1,3 @@
-// eu nao fui a aula hoje e estou mexendo no trabalho desde manha eu vou ficar louco
 <?php
 session_start();
 

@@ -122,42 +122,111 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
 
         case 'deletar_item':
-            $codigo = $_POST['codigo_auth'] ?? '';
-            $codigoCorreto = 'DEL2026';
+            $codigo = trim($_POST['codigo_auth'] ?? '');
+            $tipo_item = $_POST['tipo_item'] ?? '';
+            $id_item = filter_input(INPUT_POST, 'id_item', FILTER_VALIDATE_INT);
+            $codigoCorreto = $_SESSION['codigo_exclusao'] ?? '';
 
-            if ($codigo === $codigoCorreto) {
-                if (isset($_SERVER['HTTP_REFERER'])) {
-                    header("Location: " . $_SERVER['HTTP_REFERER']);
-                } else {
-                    header("Location: ../view/painel_funcionario.php");
+            if ($codigo === $codigoCorreto && !empty($codigoCorreto) && $id_item) {
+                try {
+                    if ($tipo_item === 'funcionario' || $tipo_item === 'aluno') {
+                        $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ? AND tipo = ?");
+                        $stmt->execute([$id_item, $tipo_item]);
+                    } elseif ($tipo_item === 'entidade') {
+                        $stmt = $pdo->prepare("DELETE FROM entidades WHERE id = ?");
+                        $stmt->execute([$id_item]);
+                    } elseif ($tipo_item === 'curso') {
+                        $stmt = $pdo->prepare("DELETE FROM cursos WHERE id = ?");
+                        $stmt->execute([$id_item]);
+                    }
+                    header("Location: ../view/gerenciar_" . $tipo_item . "s.php?sucesso=deletado");
+                } catch (PDOException $e) {
+                    header("Location: ../view/gerenciar_" . $tipo_item . "s.php?erro=falha_banco");
                 }
             } else {
-                if (isset($_SERVER['HTTP_REFERER'])) {
-                    header("Location: " . $_SERVER['HTTP_REFERER']);
-                } else {
-                    header("Location: ../view/painel_funcionario.php");
-                }
+                $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '../view/painel_funcionario.php';
+                $separador = (strpos($redirect, '?') !== false) ? '&' : '?';
+                header("Location: " . $redirect . $separador . "erro=codigo_invalido");
             }
             exit();
             break;
 
         case 'editar_aluno':
-            header("Location: ../view/gerenciar_alunos.php");
+            $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $nome = trim($_POST['nome'] ?? '');
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+            if ($id && $nome && $email) {
+                try {
+                    $stmt = $pdo->prepare("UPDATE usuarios SET nome = ?, email = ? WHERE id = ? AND tipo = 'aluno'");
+                    $stmt->execute([$nome, $email, $id]);
+                    header("Location: ../view/gerenciar_alunos.php?sucesso=editado");
+                } catch (PDOException $e) {
+                    header("Location: ../view/gerenciar_alunos.php?erro=email_existente");
+                }
+            } else {
+                header("Location: ../view/gerenciar_alunos.php?erro=dados_invalidos");
+            }
             exit();
             break;
 
         case 'editar_funcionario':
-            header("Location: ../view/gerenciar_funcionarios.php");
-            exit();
-            break;
+            $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $nome = trim($_POST['nome'] ?? '');
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 
-        case 'editar_curso':
-            header("Location: ../view/gerenciar_cursos.php");
+            if ($id && $nome && $email) {
+                try {
+                    $stmt = $pdo->prepare("UPDATE usuarios SET nome = ?, email = ? WHERE id = ? AND tipo = 'funcionario'");
+                    $stmt->execute([$nome, $email, $id]);
+                    header("Location: ../view/gerenciar_funcionarios.php?sucesso=editado");
+                } catch (PDOException $e) {
+                    header("Location: ../view/gerenciar_funcionarios.php?erro=email_existente");
+                }
+            } else {
+                header("Location: ../view/gerenciar_funcionarios.php?erro=dados_invalidos");
+            }
             exit();
             break;
 
         case 'editar_entidade':
-            header("Location: ../view/gerenciar_entidades.php");
+            $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $nome = trim($_POST['nome'] ?? '');
+            $cnpj = trim($_POST['cnpj'] ?? '');
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+            if ($id && $nome && $cnpj && $email) {
+                try {
+                    $stmt = $pdo->prepare("UPDATE entidades SET nome = ?, cnpj = ?, email_comercial = ? WHERE id = ?");
+                    $stmt->execute([$nome, $cnpj, $email, $id]);
+                    header("Location: ../view/gerenciar_entidades.php?sucesso=editado");
+                } catch (PDOException $e) {
+                    header("Location: ../view/gerenciar_entidades.php?erro=falha_banco");
+                }
+            } else {
+                header("Location: ../view/gerenciar_entidades.php?erro=dados_invalidos");
+            }
+            exit();
+            break;
+
+        case 'editar_curso':
+            $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $titulo = trim($_POST['titulo'] ?? '');
+            $entidade_id = filter_input(INPUT_POST, 'entidade_id', FILTER_VALIDATE_INT);
+            $descricao = trim($_POST['descricao'] ?? '');
+            $imagem_capa = filter_input(INPUT_POST, 'imagem_capa', FILTER_SANITIZE_URL);
+
+            if ($id && $titulo && $entidade_id && $descricao && $imagem_capa) {
+                try {
+                    $stmt = $pdo->prepare("UPDATE cursos SET titulo = ?, entidade_id = ?, descricao = ?, imagem_capa = ? WHERE id = ?");
+                    $stmt->execute([$titulo, $entidade_id, $descricao, $imagem_capa, $id]);
+                    header("Location: ../view/gerenciar_cursos.php?sucesso=editado");
+                } catch (PDOException $e) {
+                    header("Location: ../view/gerenciar_cursos.php?erro=falha_banco");
+                }
+            } else {
+                header("Location: ../view/gerenciar_cursos.php?erro=dados_invalidos");
+            }
             exit();
             break;
 

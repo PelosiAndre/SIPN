@@ -605,6 +605,63 @@ progress::-moz-progress-bar {
     display: block;
 }
 
+.text-warning-muted {
+    margin-bottom: 1.5rem;
+    color: #4a5568;
+}
+
+.btn-solid-danger {
+    background: #e53e3e;
+    color: var(--white);
+}
+
+.btn-solid-danger:hover {
+    background: #c53030;
+}
+
+.btn-solid-edit {
+    background: #3182ce;
+    color: var(--white);
+}
+
+.btn-solid-edit:hover {
+    background: #2b6cb0;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.admin-table th, .admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.modal-large {
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.mt-4 {
+    margin-top: 4rem;
+}
+
 @media (max-width: 768px) {
     .lesson-row {
         grid-template-columns: 1fr;
